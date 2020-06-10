@@ -1,0 +1,29 @@
+{% extends 'blog/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="section">
+        <div class="container">
+            <form class="delete_form" method="POST">
+                <div class="form_delete_post">
+                    <div class="post_delete_title"> -{{ comment.author }}</div>
+                    {% csrf_token %}
+                    <div class="register_title">
+                        <p> Are you sure?</p>
+                    </div>
+                    <div class="border_bottom"></div>
+                    <br>
+                    <div class="register_form_inner">{{ form|crispy }}</div>
+                    <div>
+                        <button type="submit" class="post_delete_btn">Delete</button>
+                        <button class="post_delete_btn"><a href="{% url 'post_detail' pk=post.pk %}">Cancel</a></button>
+                    </div>
+                    <div class="text">
+                        <p>{{ comment.text|truncatewords:20|linebreaksbr|urlize }}</p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+{% endblock %}

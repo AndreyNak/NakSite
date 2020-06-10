@@ -1,0 +1,82 @@
+{% extends 'blog/base.html' %}
+{% load my_temtag %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <section class="section">
+        <div class="container">
+            <div class="post post--detail">
+                <div class="post_container">
+                    <div class="post_header">
+                        <div class="post_title">{{ post.title }}</div>
+                        <div class="post_actions">
+                            {% if not request.user.profile.banned %}
+                                {% if post.author == user or request.user|has_group:'moder' %}
+                                    <p><a class="post_btn" href="{% url 'post_delete' post.pk %}">
+                                        Delete</a>
+                                        <a class="post_btn" href="{% url 'post_edit' post.pk %}">Edit</a>
+                                    </p>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="post_body">
+                        <div class="post_text">{{ post.text|linebreaksbr|urlize }}
+                        </div>
+                    </div>
+                    <div class="post_footer">
+                        <div class="post_author">{{ post.author|default_if_none:"Anonymous User" }}</div>
+                        <div class="post_date">{{ post.published_date|date:"j F Y, h:i A" }}
+                            ({{ post.published_date|timesince }} ago)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="post_comments">
+                <div class="comments_header">
+                    <div class="border_bottom"></div>
+                </div>
+                <div class="comment_form">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <div class="own_form">{{ form|crispy }}</div>
+                        {% if request.user.profile.banned %}
+                            <div class="comment-count">
+                                <a class="comment_btn" href="#">You are banned</a>
+                            </div>
+                        {% elif request.user.is_anonymous %}
+                            <div class="comment_count">
+                                <a class="comment_btn" href="">Login for comment</a>
+                            </div>
+                        {% else %}
+                            <div class="comment_count">
+                                <button type="submit" class="comment_btn" ><a style="font-size: 15px">Add comment</a></button>
+                            </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+            <div class="comments">
+                {% for comment in post.comments.all %}
+                    <div class="comment">
+                        <p class="comment_author">— {{ comment.author }}</p>
+                        <p>{{ comment.text|linebreaks }}</p>
+                        <div class="comment_footer">
+                            <div class="comment_time">{{ comment.published_date|date:"j F Y, h:i A" }}</div>
+                            {% if request.user.username == comment.author or request.user|has_group:'moder' %}
+                                <div class="comment_actions">
+                                    <p><a class="comment_action"
+                                          href="{% url 'delete_comment' post.pk comment.id %}">Delete</a>
+                                        <a class="comment_action"
+                                           href="{% url 'update_comment' post.pk comment.id %}">Edit</a></p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="quiet-here">it's very quiet in here</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

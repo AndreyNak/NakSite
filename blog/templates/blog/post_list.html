@@ -1,0 +1,71 @@
+{% extends 'blog/base.html' %}
+{% block title %}{% endblock %}
+{% block  content %}
+    <section class="section">
+        <div class="container">
+            {% for post in posts %}
+                <div class="posts">
+                    <div class="post post--change">
+                        <a class="post_a" href="{{ post.get_absolute_url }}">
+                            <div class="post_container">
+                                <div class="post_header">
+                                    <div class="post_title">{{ post.title }}</div>
+                                    <div class="post_id">{{ post.counter0 }}</div>
+                                </div>
+                                <div class="post_body">
+                                    <div class="post_text">{{ post.text|truncatechars:60 }}</div>
+                                    {% if post.text|length > 200 %}
+                                        <div class="post_text">Read remaining {{ post.text|wordcount }} words...</div>
+                                        </div>
+                                    {% endif %}
+                                <div class="post_footer">
+                                    <div class="post_author"> — {{ post.author|default_if_none:"Anonymous User" }}</div>
+                                    <div class="post_date">
+                                        {{ post.published_date|date:"j F Y, h:i A" }}
+                                    </div>
+                                    <div class="post_comments">
+                                        {% if post.comments.count == 1 %}
+                                            <div class="comment-count">
+                                                <div class="comments_info">
+                                                    {{ post.comments.count }} comment
+                                                </div>
+                                            </div>
+                                        {% elif post.comments.count > 1 %}
+
+                                            <div class="comment-count">
+                                                <div class="comments_info">
+                                                    {{ post.comments.count }} comments
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No articles</p>
+            {% endfor %}
+            <div class="pagination">
+            {% if is_paginated %}
+                {% if page_obj.has_previous %}
+                    <a class="pagination_btn" href="?page=1">First</a>
+                    <a class="pagination_btn" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if is_paginated.number  == num %}
+                        <a class="pagination_btn" href="?page={{ num }}">{{ num }}</a>
+                    {% elif  num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a class="pagination_btn" href="?page={{ num }}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <a class="pagination_btn" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    <a class="pagination_btn" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                {% endif %}
+            {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

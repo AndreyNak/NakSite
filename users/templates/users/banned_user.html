@@ -1,0 +1,21 @@
+{% extends 'blog/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="section">
+        <div class="container">
+            <div class="form_banned">
+                <div class="banned_container_inner">
+
+                <form method="post" style="border: 1px solid #333333; padding: 5px 0">
+                     <p>Username:{{ user }}</p>
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button class="banned_btn" type="submit">Done</button>
+                </form>
+                <p><a class="banned_btn banned_btn--a" href="{% url 'list_users' %}">Back</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

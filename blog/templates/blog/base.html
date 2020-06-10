@@ -1,0 +1,109 @@
+{% load static %}
+{% load my_temtag %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://kit.fontawesome.com/bfe600ec23.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+    {% block title %}<title>MyBlog</title>{% endblock %}
+</head>
+<body>
+<header class="header">
+    <div class="header__inner">
+        <div class="container">
+            <div class="header_inner">
+                <nav class="nav">
+                    <div>
+                        <a class="nav__link logo" href="{% url 'post_list' %}">NakSite</a>
+                    </div>
+                    {% if user.is_authenticated %}
+                        {% if not request.user.profile.banned %}
+                            <div class="nav__item">
+                                <a class="nav__link s--link" href="{% url 'post_new' %}"><i
+                                        class="far fa-plus-square"></i>add
+                                    post</a>
+                            </div>
+                        {% endif %}
+
+                        <div>
+                            <a class="nav__link s--link" href="{% url 'profile' %}"><i class="far fa-address-card"></i>profile</a>
+                        </div>
+                        <div>
+                            <a class="nav__link s--link" href="{% url 'logout' %}"><i class="fas fa-door-open"></i>
+                                logout</a>
+                        </div>
+                        {% if request.user|has_group:'moder' and not request.user.profile.banned%}
+                            <div>
+                                <a class="nav__link s--link" href="{% url 'list_users' %}"><i
+                                        class="fas fa-info-circle"></i>list users</a>
+                            </div>
+                        {% endif %}
+                    {% elif user.is_anonymous %}
+                        <div>
+                            <a class="nav__link s--link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i>login</a>
+                        </div>
+                        <div>
+                            <a class="nav__link s--link" href="{% url 'register' %}"><i class="far fa-address-book"></i>sign on</a>
+                        </div>
+                        <div>
+                            <a class="nav__link s--link" href="{% url 'about' %}"><i class="fas fa-info-circle"></i>about</a>
+                        </div>
+
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+<section class="section">
+    <div class="container">
+        {% if user.is_anonymous %}
+            <div class="login">
+                <div class="login-banner">
+                    <h2><a class="login_login" href="{% url 'login' %}">LOGIN</a> /
+                        <a class="login_create" href="{% url 'register' %}">CREATE</a> ACCOUNT</h2>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{{ message }}
+{% if messages %}
+    {% for message in messages %}
+        <div class="text-center">
+            <div class="new_user_banner">
+                <i>{{ message }}!</i><br>
+            </div>
+        </div>
+
+    {% endfor %}
+
+{% endif %}
+    <div class="content">
+    {% block content %}
+    {% endblock %}
+    </div>
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="links">
+                <div class="link_item">
+                    <div class="vk_link"><a href="https://vk.com/eslibiyaznal" target="_blank"><i
+                            class="fab fa-vk"></i></a></div>
+                </div>
+                <div class="link_item">
+                    <div class="inst_link"><a href="https://www.instagram.com/u_so_stoopead_xd/" target="_blank"><i
+                            class="fab fa-instagram"></i></a></div>
+                </div>
+                <div class="link_item">
+                    <div class="twitter_link"><a href="https://twitter.com/andre20886602" target="_blank"><i
+                            class="fab fa-twitter"></i></a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
